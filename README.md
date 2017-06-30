@@ -33,3 +33,9 @@ apt-get install imagemagick -y
 ```
 apt-get install libav-tools -y
 ```
+
+
+###### ENABLE SENSOR MONITORING
+```
+sudo npm install node-dht-sensor
+```
