@@ -1,7 +1,3 @@
-#ENABLE PYTHON PICAMERA
-# sudo apt-get update
-# sudo apt-get install python-picamera
-
 from time import sleep
 import datetime
 import os
@@ -35,10 +31,7 @@ for i in range(frames):
 camera.stop_preview()
 
 
-#FOR GIF
-# apt-get install imagemagick -y
-#FOR VIDEO
-# apt-get install ffmpeg
+
 
 os.system('convert -delay 1 -loop 0 image*.jpg animation.gif')
 print 'animation done'

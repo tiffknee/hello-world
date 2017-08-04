@@ -17,10 +17,18 @@ __hardware:__
 * box
 
 
-###### code
+###### ENABLE PYTHON PICAMERA
 
 ```sudo apt-get update```
+
 ```sudo apt-get install python-picamera```
+
+
+###### FOR COMPILING GIFS
+```apt-get install imagemagick -y```
+
+###### FOR COMPILING VIDEOS
+```apt-get install ffmpeg```
 
 
 As Kanye West said:
