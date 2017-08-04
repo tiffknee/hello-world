@@ -14,23 +14,22 @@ __outputs:__
 
 __hardware:__
 * raspberry pi 3
+* rpi camera
 * box
 
 
 ###### ENABLE PYTHON PICAMERA
-
-```sudo apt-get update```
-
-```sudo apt-get install python-picamera```
-
+```
+sudo apt-get update
+sudo apt-get install python-picamera
+```
 
 ###### FOR COMPILING GIFS
-```apt-get install imagemagick -y```
+```
+apt-get install imagemagick -y
+```
 
 ###### FOR COMPILING VIDEOS
-```apt-get install ffmpeg```
-
-
-As Kanye West said:
-> We're living the future so
-> the present is our past.
+```
+apt-get install libav-tools -y
+```
