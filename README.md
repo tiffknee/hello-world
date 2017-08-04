@@ -19,9 +19,10 @@ __hardware:__
 
 ###### code
 
-`sudo apt-get update
-sudo apt-get install python-picamera`
+```sudo apt-get update```
+```sudo apt-get install python-picamera```
 
 
 As Kanye West said:
-> We're living the future so the present is our past.
+> We're living the future so
+> the present is our past.
