@@ -26,6 +26,7 @@ ___
 libraries
 -----------
 
+see if you have node and npm installed with `node -v` and `npm -v`
 
 ###### ENABLE GPIO ACCESS
 ```
