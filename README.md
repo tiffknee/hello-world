@@ -1,37 +1,44 @@
-humidity-chamber
+Humidity Chamber using Node.js
 ===========
 
 a controlled environment for monitoring stuff that likes moisture
 
 
-__inputs:__
-* temperature sensor
-* relative humidity sensor
-* rpi camera
+parts
+-----------
 
-__outputs:__
-* humidifier
-* dehumidifier
-* fans
+**inputs:**
++ relative humidity & temperature
+⋅⋅⋅DHT11/22 sensor + 4.7K ohm resistor
++ [rPi camera](https://www.raspberrypi.org/products/camera-module-v2/)
 
-__hardware:__
-* raspberry pi 3
-* hdmi display
-* relay
+**outputs:**
++ humidifier
++ dehumidifier
++ DC fans
 
-__other parts:__
-* box (glass top, acrylic bed, wood base)
+**hardware:**
++ [raspberryPi 3](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
++ hdmi display
++ 4 channel relay
+
+
+___
+
+libraries
+-----------
 
 
 ###### ENABLE GPIO ACCESS
 ```
-sudo npm install onoff
+npm install onoff --save
 ```
 
 ###### ENABLE SENSOR MONITORING
 ```
-sudo npm install node-dht-sensor
+npm install node-dht-sensor
 ```
+this module depends on [drivers](http://www.airspayce.com/mikem/bcm2835/) for the BCM2835 chip
 
 
 ###### ENABLE PYTHON PICAMERA
@@ -49,3 +56,8 @@ apt-get install imagemagick -y
 ```
 apt-get install libav-tools -y
 ```
+
+
+### rPi3 gpio pinout
+
+![reference diagram](img/pinout.png)
