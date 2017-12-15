@@ -4,12 +4,10 @@ Humidity Chamber using Node.js
 a controlled environment for monitoring stuff that likes moisture
 
 
-parts
------------
+### parts
 
 **inputs:**
-+ relative humidity & temperature
-⋅⋅⋅DHT11/22 sensor + 4.7K ohm resistor
++ relative humidity & temperature (DHT11/22 sensor + 4.7K ohm resistor)
 + [rPi camera](https://www.raspberrypi.org/products/camera-module-v2/)
 
 **outputs:**
@@ -34,7 +32,7 @@ libraries
 npm install onoff --save
 ```
 
-###### ENABLE SENSOR MONITORING
+###### ENABLE SENSOR READING
 ```
 npm install node-dht-sensor
 ```
@@ -58,6 +56,9 @@ apt-get install libav-tools -y
 ```
 
 
-### rPi3 gpio pinout
+___
+
+rPi3 gpio pinout
+-----------
 
 ![reference diagram](img/pinout.png)
