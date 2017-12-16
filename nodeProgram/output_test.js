@@ -15,6 +15,6 @@ process.on('SIGINT', function () { //listen to the event triggered on CTRL+C
   clearInterval(interval);
   humider.writeSync(0); //clean close of GPIO pin before exiting
   humider.unexport();
-  console.log('Bye, bye!');
+  console.log('bye bye ~ !!');
   process.exit();
 });
