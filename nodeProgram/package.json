@@ -16,6 +16,8 @@
   "dependencies": {
     "express": "^4.16.2",
     "socket.io": "^2.0.4",
+    "onoff": "^1.1.1",
+    "node-dht-sensor": "0.0.32",
     "campi": "0.0.4",
     "base64-stream": "0.1.2"
   }
