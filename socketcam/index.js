@@ -14,15 +14,15 @@ http.listen(3000, function () {
     var busy = false;
     var imageCount = 0;
     var delay = 1000 * 60 * 5; //5 minutes
-    var time = 1000 * 60 * 60 * 7; //7 hours
+    var duration = 1000 * 60 * 60 * 7; //7 hours
 
     console.log('listening on port 3000');
 
     var saveFrames = setInterval(function () {
         busy = true;
         campi.getImageAsFile({
-            width: 640,
-            height: 480,
+            width: 1024,
+            height: 768,
             nopreview: true,
             timeout: 1,
             hflip: true,
@@ -34,7 +34,7 @@ http.listen(3000, function () {
             console.log('Image #'+imageCount+' captured');
             imageCount++;
             busy = false;
-            if (imageCount === time/delay) {
+            if (imageCount === duration/delay) {
                 console.log('Captured all frames for timelapse');
                 clearInterval(saveFrames);
             }
