@@ -13,7 +13,7 @@ app.get('/', function (req, res) {
 http.listen(3000, function () {
     var busy = false;
     console.log('listening on port 3000');
-/*
+
     setInterval(function () {
         if (!busy) {
             busy = true;
@@ -39,7 +39,7 @@ http.listen(3000, function () {
             });
         }
     }, 15000);
-*/
+
     setInterval(function () {
         if (!busy) {
             busy = true;
