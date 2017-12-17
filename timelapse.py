@@ -17,7 +17,7 @@ print 'made folder'
 
 camera = picamera.PiCamera()
 camera.resolution = (1024, 768)
-camera.vflip = True #
+# camera.vflip = True
 
 interval = delay*60 #in secs
 frames = (duration*60*60) / interval #in secs
