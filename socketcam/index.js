@@ -80,7 +80,9 @@ http.listen(3000, function () {
                 height: 480,
                 shutter: 200000,
                 timeout: 1,
-                nopreview: true
+                nopreview: true,
+                hflip: true,
+                vflip: true
             }, function (err, stream) {
                 var message = '';
 
