@@ -58,9 +58,9 @@ http.listen(3000, function () {
     var imageCount = 0;
 
     // TODO: configurable via interface?
-    var duration = 1000 * 60 * 60 * 3; //7 hours for wood; 3 hours for biomat
+    var duration = 1000 * 60 * 60 * 7; //7 hours for wood; 3 hours for biomat
     var delay = 1000 * 60 * 2; //5 minutes for wood; 2 minutes for biomat
-    var rate = 1000 * 10; //15 seconds for wood; 10 seconds for biomat
+    var rate = 1000 * 15; //15 seconds for wood; 10 seconds for biomat
 
 
     interval(function(){
@@ -101,8 +101,8 @@ http.listen(3000, function () {
             height: 768,
             nopreview: true,
             timeout: 1,
-            hflip: true,
-            vflip: true
+            hflip: false,
+            vflip: false
         }, './'+stamp+'/'+imageCount+'.jpg', function (err) {
             if (err) {
                 throw err;
@@ -120,22 +120,11 @@ http.listen(3000, function () {
             height: 480,
             nopreview: true,
             timeout: 1,
-            hflip: true,
-            vflip: true,
-            shutter: 200000
+            hflip: false,
+            vflip: false,
+            shutter: 20000
         }, function (err, stream) {
-            var message = '';
-
-            var base64Stream = stream.pipe(base64.encode());
-
-            base64Stream.on('data', function (buffer) {
-                message += buffer.toString();
-            });
-
-            base64Stream.on('end', function () {
-                io.sockets.emit('image', message);
-                busy = false;
-            });
+            
         });
     }
 
