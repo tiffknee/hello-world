@@ -58,7 +58,7 @@ function stopStreaming() {
 function startStreaming(io) {
  
   if (app.get('watchingFile')) { //if capturing already started, do not re-init the same; emit the last saved image to the client
-    io.sockets.emit('liveStream', 'image_stream.jpg?_t=' + (Math.random() * 100000)); //avoid caching
+    io.sockets.emit('liveStream', 'image_stream.jpg?_t=' + (Math.random() * 100000)); //_t param on the image is to avoid caching
     return;
   }
  

@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
- 
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>humidity chamber</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css">
+
   <style type="text/css">
+  #container {
+    width: 50%;
+    margin: 0 auto;
+  }
   #stream {
     height: 99%;
     margin: 0px auto;
@@ -18,18 +20,19 @@
   </style>
 
   <script src="/socket.io/socket.io.js"></script>
+
   <script>
-  var socket = io();
-  socket.on('liveStream', function(url) {
-    $('#stream').attr('src', url);
+  var socket = io(); //init sockets
+  socket.on('liveStream', function(url) { //when new image is saved, liveStream event will be broadcasted
+    $('#stream').attr('src', url); //then we fetch the image
     $('.start').hide();
   });
- 
-  function startStream() {
+  function startStream() { //start streaming when a user clicks on the button
     socket.emit('start-stream');
-    $('.start').hide();
+    $('.start').hide(); //if video has already started by another user, hide the button and show the last saved image
   }
   </script>
+
 </head>
 
 <body>
