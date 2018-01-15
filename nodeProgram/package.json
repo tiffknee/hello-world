@@ -1,13 +1,18 @@
 {
   "name": "humidity-chamber",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "just another humidity chamber",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Tiffany Cheng",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiffknee/humidity-chamber"
+  },
   "dependencies": {
     "express": "^4.16.2",
     "socket.io": "^2.0.4"
