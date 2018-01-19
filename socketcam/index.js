@@ -17,19 +17,6 @@ http.listen(3000, function () {
     setInterval(function () {
         if (!busy) {
             busy = true;
-            campi.getImageAsFile({
-                width: 640,
-                height: 480,
-                nopreview: true,
-                timeout: 1,
-                hflip: true,
-                vflip: true
-            }, './output.jpg', function (err) {
-                if (err) {
-                    throw err;
-                }
-                console.log('Image captured');
-            });
             campi.getImageAsStream({
                 width: 640,
                 height: 480,
@@ -52,4 +39,24 @@ http.listen(3000, function () {
             });
         }
     }, 15000);
+
+    setInterval(function () {
+        if (!busy) {
+            busy = true;
+            campi.getImageAsFile({
+                width: 640,
+                height: 480,
+                nopreview: true,
+                timeout: 1,
+                hflip: true,
+                vflip: true
+            }, './output.jpg', function (err) {
+                if (err) {
+                    throw err;
+                }
+                console.log('Image captured');
+            });
+        }
+    }, 15000);
+
 });
