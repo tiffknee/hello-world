@@ -17,7 +17,7 @@ a controlled environment for monitoring stuff that likes moisture
 
 **hardware:**
 + [raspberryPi 3](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
-+ hdmi display
++ [hdmi display](http://www.raspberrypiwiki.com/index.php/How_to_use_LCD_driver)
 + 4 channel relay
 
 
