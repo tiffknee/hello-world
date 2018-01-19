@@ -19,6 +19,7 @@ http.listen(3000, function () {
     console.log('listening on port 3000');
 
     var saveFrames = setInterval(function () {
+        busy = true;
         campi.getImageAsFile({
             width: 640,
             height: 480,
@@ -32,13 +33,14 @@ http.listen(3000, function () {
             }
             console.log('Image #'+imageCount+' captured');
             imageCount++;
+            busy = false;
             if (imageCount === time/delay) {
                 console.log('Captured all frames for timelapse');
                 clearInterval(saveFrames);
             }
         });
     }, delay);
-
+/*
     setInterval(function () {
         if (!busy) {
             busy = true;
@@ -64,5 +66,5 @@ http.listen(3000, function () {
             });
         }
     }, 15000);
-
+*/
 });
