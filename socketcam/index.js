@@ -2,9 +2,17 @@ var Campi = require('campi'),
     app = require('express')(),
     http = require('http').Server(app),
     io = require('socket.io')(http),
+    fs = require('fs'),
     base64 = require('base64-stream');
 
 var campi = new Campi();
+
+var now = new Date();
+var stamp = now.getMonth()+'-'+now.getDay()+'-'+now.getHours()+'-'+now.getMinutes();
+
+if (!fs.existsSync(stamp)){
+    fs.mkdirSync(stamp);
+}
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
@@ -13,7 +21,7 @@ app.get('/', function (req, res) {
 http.listen(3000, function () {
     var busy = false;
     var imageCount = 0;
-    var delay = 1000 * 60 * 5; //5 minutes
+    var delay = 1000 * 5; //5 minutes
     var duration = 1000 * 60 * 60 * 7; //7 hours
 
     console.log('listening on port 3000');
@@ -27,7 +35,7 @@ http.listen(3000, function () {
             timeout: 1,
             hflip: true,
             vflip: true
-        }, './output'+imageCount+'.jpg', function (err) {
+        }, './'+stamp+'/'+imageCount+'.jpg', function (err) {
             if (err) {
                 throw err;
             }
