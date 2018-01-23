@@ -12,6 +12,7 @@ var stamp = now.getMonth()+'-'+now.getDay()+'-'+now.getHours()+'-'+now.getMinute
 
 if (!fs.existsSync(stamp)){
     fs.mkdirSync(stamp);
+    console.log('Folder #'+stamp+' created');
 }
 
 app.get('/', function (req, res) {
@@ -20,8 +21,9 @@ app.get('/', function (req, res) {
 
 http.listen(3000, function () {
     var busy = false;
+
     var imageCount = 0;
-    var delay = 1000 * 5; //5 minutes
+    var delay = 1000 * 60 * 5; //5 minutes
     var duration = 1000 * 60 * 60 * 7; //7 hours
 
     console.log('listening on port 3000');
@@ -49,7 +51,8 @@ http.listen(3000, function () {
         });
     }, delay);
 
-/*
+    var rate = 1000 * 15; //15 seconds
+
     setInterval(function () {
         if (!busy) {
             busy = true;
@@ -74,7 +77,6 @@ http.listen(3000, function () {
                 });
             });
         }
-    }, 15000);
-*/
+    }, rate);
 
 });
