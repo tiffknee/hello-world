@@ -15,6 +15,25 @@ if (!fs.existsSync(stamp)){
     console.log('Folder #'+stamp+' created');
 }
 
+function interval(func, wait, times){
+    var interv = function(w, t){
+        return function(){
+            if(typeof t === "undefined" || t-- > 0){
+                setTimeout(interv, w);
+                try{
+                    func.call(null);
+                }
+                catch(e){
+                    t = 0;
+                    throw e.toString();
+                }
+            }
+        };
+    }(wait, times);
+
+    setTimeout(interv, wait);
+};
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -25,11 +44,15 @@ http.listen(3000, function () {
     var imageCount = 0;
     var delay = 1000 * 60 * 5; //5 minutes
     var duration = 1000 * 60 * 60 * 7; //7 hours
+    var rate = 1000 * 15; //15 seconds
+    var times = delay/rate;
 
     console.log('listening on port 3000');
 
     var saveFrames = setInterval(function () {
+
         busy = true;
+
         campi.getImageAsFile({
             width: 1024,
             height: 768,
@@ -49,11 +72,8 @@ http.listen(3000, function () {
                 clearInterval(saveFrames);
             }
         });
-    }, delay);
 
-    var rate = 1000 * 15; //15 seconds
-
-    setInterval(function () {
+        interval(function(){
         if (!busy) {
             busy = true;
             campi.getImageAsStream({
@@ -77,6 +97,8 @@ http.listen(3000, function () {
                 });
             });
         }
-    }, rate);
+    }, rate, times);
+
+    }, delay);
 
 });
