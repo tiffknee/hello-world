@@ -45,7 +45,6 @@ http.listen(3000, function () {
     var delay = 1000 * 60 * 5; //5 minutes
     var duration = 1000 * 60 * 60 * 7; //7 hours
     var rate = 1000 * 15; //15 seconds
-    var times = delay/rate;
 
     console.log('listening on port 3000');
 
@@ -97,7 +96,7 @@ http.listen(3000, function () {
                 });
             });
         }
-    }, rate, times);
+    }, rate, delay/rate);
 
     }, delay);
 
