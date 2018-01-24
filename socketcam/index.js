@@ -42,9 +42,9 @@ http.listen(3000, function () {
     var busy = false;
 
     var imageCount = 0;
-    var delay = 1000 * 60 * 5; //5 minutes
-    var duration = 1000 * 60 * 60 * 7; //7 hours
-    var rate = 1000 * 15; //15 seconds
+    var duration = 1000 * 60 * 60 * 3; //7 hours for wood
+    var delay = 1000 * 60 * 2; //5 minutes for wood
+    var rate = 1000 * 10; //15 seconds for wood
 
     console.log('listening on port 3000');
 
