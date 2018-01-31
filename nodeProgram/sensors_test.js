@@ -1,4 +1,5 @@
 var sensorLib = require('node-dht-sensor');
+    fs = require('fs');
 
 var dht_sensor = {
     initialize: function () {
@@ -8,6 +9,13 @@ var dht_sensor = {
         var readout = sensorLib.read();
         console.log('Temperature: ' + readout.temperature.toFixed(2) + 'C, ' +
             'humidity: ' + readout.humidity.toFixed(2) + '%');
+        fs.appendFile('sensorlog.txt', "Temperature: " + readout.temperature.toFixed(2) + "C, " +
+                      "humidity: " + readout.humidity.toFixed(2) + "%" + "\n", (err) => {
+            if(err) throw err;
+            console.log('appended');
+            
+        }
+                     );
         setTimeout(function () {
             dht_sensor.read();
         }, 2000);
