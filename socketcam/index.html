@@ -1,42 +1,78 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>Raspberry Pi Camera</title>
+    <title>humidity chamber</title>
+
     <script src="/socket.io/socket.io.js"></script>
+
     <style type="text/css">
-        body {
-            background-color: #ffffff;
+        body {font-family: Arial, Helvetica, sans-serif;}
+        hr {border: 3px solid #eeeeee;}
+        h1 {font-size: 12px;}
+        small {
+            color: #737373;
+            font-style: italic;
         }
-
-        #container {
+        .container {
             width: 50%;
-            margin: 0 auto;
         }
-
-        #container p {
+        p {
+            font-size: 9px;
             width: 100%;
-            text-align: center;
+        }
+        button {
+            font-size: 9px;
+            color: #4CAF50;
+            border: 1px solid #4CAF50; 
+            border-radius: 6px;
+            padding: 6px;
+            margin-top: 12px;
+        }
+        button:hover {
+            background-color: #4CAF50;
+            color: white;
         }
     </style>
+
     <script type="text/javascript">
         document.onreadystatechange = function () {
             var state = document.readyState
             if (state == 'complete') {
                 var imageCount = 0;
-                var socket = io();
-                socket.on('image', function(message) {
-                    document.getElementById("image").src = 'data:image/jpg;base64,' + message;
-                    document.getElementById("caption").innerHTML = 'Image #' + ++imageCount;
+                var socket = io(); //init sockets
+                socket.on('image', function(message) { //when new image is saved, "image" event will be broadcasted
+                    document.getElementById("image").src = 'data:image/jpg;base64,' + message; //fetch the image
+                    document.getElementById("caption").innerHTML = 'frame #' + ++imageCount;
                 });
+                /*
+                function startStream() { //start streaming/cacpture when a user clicks on the button
+                    socket.emit('start-stream');
+                    $('.start').hide(); //if video has already started by another user, hide the button and show the last saved image
+                    //TODO: show button when timelapse has finished
+                }
+                */
             }
         }
     </script>
+
 </head>
 <body>
-<div id="container">
+
+<h1>
+    humidity chamber <small>[live streaming, image capture, data logging, sensor display]</small>
+</h1>
+
+<hr>
+
+<div class="container">
     <img width="640" height="480" id="image">
-    <p id="caption">Image #0</p>
+    <p id="caption">frame #0</p>
 </div>
+
+<hr>
+
+<button type="button" id="" onclick="startStream()">new timelapse</button>
+
 </body>
 </html>
