@@ -18,7 +18,7 @@ var dht_sensor = {
             "humidity" : humid
         }
         
-        fs.appendFile('sensor_log.json', JSON.stringify(data), (err) => {
+        fs.appendFile('sensorLog.json', JSON.stringify(data), (err) => {
             if (err) {
                 console.error(err);
                 return;
