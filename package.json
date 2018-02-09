@@ -1,11 +1,11 @@
 {
   "name": "humidity-chamber",
   "version": "0.0.1",
-  "description": "just another humidity chamber",
+  "description": "just another humidity chamber pushing rPi cam to cients using sockets",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server",
+    "test": "node index.js"
   },
   "author": "Tiffany Cheng",
   "license": "MIT",

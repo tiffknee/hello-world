@@ -17,6 +17,11 @@
         .container {
             width: 50%;
         }
+        #image {
+            height: 480px;
+            width: 640px;
+            display: block;
+        }
         p {
             font-size: 9px;
             width: 100%;
@@ -36,12 +41,12 @@
     </style>
 
     <script type="text/javascript">
-        document.onreadystatechange = function () {
-            var state = document.readyState
+        document.onreadystatechange = function() {
+            var state = document.readyState;
             if (state == 'complete') {
                 var imageCount = 0;
                 var socket = io(); //init sockets
-                socket.on('image', function(message) { //when new image is saved, "image" event will be broadcasted
+                socket.on('image', function(message) { //when new image is saved, liveStream event will be broadcasted
                     document.getElementById("image").src = 'data:image/jpg;base64,' + message; //fetch the image
                     document.getElementById("caption").innerHTML = 'frame #' + ++imageCount;
                 });
@@ -60,13 +65,14 @@
 <body>
 
 <h1>
-    humidity chamber <small>[live streaming, image capture, data logging, sensor display]</small>
+    humidity chamber
+    <small>[live streaming, image capture, data logging, sensor display]</small>
 </h1>
 
 <hr>
 
 <div class="container">
-    <img width="640" height="480" id="image">
+    <img id="image" src="">
     <p id="caption">frame #0</p>
 </div>
 

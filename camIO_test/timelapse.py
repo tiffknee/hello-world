@@ -19,17 +19,17 @@ camera = picamera.PiCamera()
 camera.resolution = (1024, 768)
 # camera.vflip = True
 
+camera.start_preview()
+sleep(120)
+camera.stop_preview()
+
 interval = delay*60 #in secs
 frames = (duration*60*60) / interval #in secs
-
-# camera.start_preview()
 
 for i in range(frames):
     camera.capture('image{0:04d}.jpg'.format(i))
     print i
     sleep(interval)
-
-# camera.stop_preview()
 
 
 # os.system('convert -delay 1 -loop 0 image*.jpg animation.gif')

@@ -1,9 +1,9 @@
-var Campi = require('campi'),
-    app = require('express')(),
+var app = require('express')(),
     http = require('http').Server(app),
     io = require('socket.io')(http),
     fs = require('fs'),
     sensorLib = require('node-dht-sensor'),
+    Campi = require('campi'),
     base64 = require('base64-stream');
 
 var campi = new Campi();
