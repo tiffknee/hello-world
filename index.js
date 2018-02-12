@@ -69,11 +69,14 @@ http.listen(3000, function () {
             console.log('Image #'+imageCount+' captured');
             imageCount++;
             busy = false;
-            if (imageCount === duration/delay) {
-                console.log('Captured all frames for timelapse');
-                clearInterval(saveFrames);
-            }
         });
+
+        if (imageCount === duration/delay) {
+            console.log('Captured all frames for timelapse');
+            clearInterval(saveFrames);
+        }
+
+        logData.read();
 
         interval(function(){
             if (!busy) {
@@ -105,6 +108,8 @@ http.listen(3000, function () {
 
     }, delay);
 
+    
+
     // measurements from sensors
     var logData = {
         initialize: function () {
@@ -129,9 +134,6 @@ http.listen(3000, function () {
                 console.log('Temperature: ' + temp + 'C, ' + 'humidity: ' + humid + '%');
             });
 
-            setTimeout(function () {
-                logData.read();
-            }, delay);
         }
     };
 
