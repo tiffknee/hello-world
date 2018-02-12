@@ -39,20 +39,50 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+var sockets = {};
+ 
+io.on('connection', function(socket) {
+  socket.on('start-stream', function() {
+    session(io);
+  });
+});
+
 http.listen(3000, function () {
     console.log('listening on port 3000');
 
     var busy = false;
-
     var imageCount = 0;
 
     var duration = 1000 * 60 * 60 * 3; //7 hours for wood; 3 hours for biomat
     var delay = 1000 * 60 * 2; //5 minutes for wood; 2 minutes for biomat
     var rate = 1000 * 10; //15 seconds for wood; 10 seconds for biomat
 
-    // take and reload picture, measurements from sensors
-    var saveFrames = setInterval(function () {
 
+    var session = setInterval(function () {
+
+        saveFrames();
+        logData.record();
+
+        if (imageCount === duration/delay) {
+            console.log('Captured all frames for timelapse');
+            clearInterval(session);
+        }
+
+        interval(function(){
+
+            if (!busy) {
+                streaming();
+            }
+
+            logData.display();
+
+        }, rate, delay/rate);
+
+    }, delay);
+
+
+    // take picture
+    function saveFrames(){
         busy = true;
 
         campi.getImageAsFile({
@@ -70,54 +100,42 @@ http.listen(3000, function () {
             imageCount++;
             busy = false;
         });
+    };
+    // reload picture
+    function streaming(){
+        busy = true;
+        campi.getImageAsStream({
+            width: 640,
+            height: 480,
+            nopreview: true,
+            timeout: 1,
+            hflip: true,
+            vflip: true,
+            shutter: 200000
+        }, function (err, stream) {
+            var message = '';
 
-        if (imageCount === duration/delay) {
-            console.log('Captured all frames for timelapse');
-            clearInterval(saveFrames);
-        }
+            var base64Stream = stream.pipe(base64.encode());
 
-        logData.read();
+            base64Stream.on('data', function (buffer) {
+                message += buffer.toString();
+            });
 
-        interval(function(){
-            if (!busy) {
-                busy = true;
-                campi.getImageAsStream({
-                    width: 640,
-                    height: 480,
-                    nopreview: true,
-                    timeout: 1,
-                    hflip: true,
-                    vflip: true,
-                    shutter: 200000
-                }, function (err, stream) {
-                    var message = '';
+            base64Stream.on('end', function () {
+                io.sockets.emit('image', message);
+                busy = false;
+            });
+        });
+    }
 
-                    var base64Stream = stream.pipe(base64.encode());
-
-                    base64Stream.on('data', function (buffer) {
-                        message += buffer.toString();
-                    });
-
-                    base64Stream.on('end', function () {
-                        io.sockets.emit('image', message);
-                        busy = false;
-                    });
-                });
-            }
-        }, rate, delay/rate);
-
-    }, delay);
-
-    
 
     // measurements from sensors
     var logData = {
-        initialize: function () {
+        initialize: function(){
             return sensorLib.initialize(22, 4);
         },
-        read: function () {
+        record: function(){
             var readout = sensorLib.read();
-
             var temp = readout.temperature.toFixed(2);
             var humid = readout.humidity.toFixed(2);
 
@@ -134,11 +152,24 @@ http.listen(3000, function () {
                 console.log('Temperature: ' + temp + 'C, ' + 'humidity: ' + humid + '%');
             });
 
+        },
+        display: function(){
+            var readout = sensorLib.read();
+            var temp = readout.temperature.toFixed(2);
+            var humid = readout.humidity.toFixed(2);
+
+            var data = {
+                "temperature" : temp,
+                "humidity" : humid
+            }
+
+            io.sockets.emit('sensorUpdate', data);
+
         }
     };
 
-    if (logData.initialize()) {
-        logData.read();
+    if (logData.initialize()){
+        logData.record();
     } else {
         console.warn('Failed to initialize sensor');
     }

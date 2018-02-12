@@ -50,13 +50,13 @@
                     document.getElementById("image").src = 'data:image/jpg;base64,' + message; //fetch the image
                     document.getElementById("caption").innerHTML = 'frame #' + ++imageCount;
                 });
-                /*
+                
                 function startStream() { //start streaming/cacpture when a user clicks on the button
                     socket.emit('start-stream');
                     $('.start').hide(); //if video has already started by another user, hide the button and show the last saved image
                     //TODO: show button when timelapse has finished
                 }
-                */
+                
             }
         }
     </script>
