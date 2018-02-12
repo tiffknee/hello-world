@@ -40,15 +40,17 @@ app.get('/', function (req, res) {
 });
 
 http.listen(3000, function () {
+    console.log('listening on port 3000');
+
     var busy = false;
 
     var imageCount = 0;
+    
     var duration = 1000 * 60 * 60 * 3; //7 hours for wood; 3 hours for biomat
     var delay = 1000 * 60 * 2; //5 minutes for wood; 2 minutes for biomat
     var rate = 1000 * 10; //15 seconds for wood; 10 seconds for biomat
 
-    console.log('listening on port 3000');
-
+    // take and reload picture
     var saveFrames = setInterval(function () {
 
         busy = true;
@@ -74,62 +76,69 @@ http.listen(3000, function () {
         });
 
         interval(function(){
-        if (!busy) {
-            busy = true;
-            campi.getImageAsStream({
-                width: 640,
-                height: 480,
-                shutter: 200000,
-                timeout: 1,
-                nopreview: true,
-                hflip: true,
-                vflip: true
-            }, function (err, stream) {
-                var message = '';
+            if (!busy) {
+                busy = true;
+                campi.getImageAsStream({
+                    width: 640,
+                    height: 480,
+                    nopreview: true,
+                    timeout: 1,
+                    hflip: true,
+                    vflip: true,
+                    shutter: 200000
+                }, function (err, stream) {
+                    var message = '';
 
-                var base64Stream = stream.pipe(base64.encode());
+                    var base64Stream = stream.pipe(base64.encode());
 
-                base64Stream.on('data', function (buffer) {
-                    message += buffer.toString();
+                    base64Stream.on('data', function (buffer) {
+                        message += buffer.toString();
+                    });
+
+                    base64Stream.on('end', function () {
+                        io.sockets.emit('image', message);
+                        busy = false;
+                    });
                 });
-
-                base64Stream.on('end', function () {
-                    io.sockets.emit('image', message);
-                    busy = false;
-                });
-            });
-        }
-    }, rate, delay/rate);
+            }
+        }, rate, delay/rate);
 
     }, delay);
 
-});
+    // measurements from sensors
+    var logData = {
+        initialize: function () {
+            return sensorLib.initialize(22, 4);
+        },
+        read: function () {
+            var readout = sensorLib.read();
 
+            var temp = readout.temperature.toFixed(2);
+            var humid = readout.humidity.toFixed(2);
 
-var dht_sensor = {
-    initialize: function () {
-        return sensorLib.initialize(22, 4);
-    },
-    read: function () {
-        var readout = sensorLib.read();
-        console.log('Temperature: ' + readout.temperature.toFixed(2) + 'C, ' +
-            'humidity: ' + readout.humidity.toFixed(2) + '%');
-        var json = JSON.stringify([  "Temperature: " + readout.temperature.toFixed(2) + "C, " +
-                      "humidity: " + readout.humidity.toFixed(2) + "%"  ]);
-        fs.appendFile('sensorlog.json', json, (err) => {
-            if(err) throw err;
-            console.log('appended');
+            var data = {
+                "temperature" : temp,
+                "humidity" : humid
+            }
             
-        }
-                     );
-        setTimeout(function () {
-            dht_sensor.read();
-        }, 120000);
-    }
-};
+            fs.appendFile('./'+stamp+'/sensorLog.json', JSON.stringify(data), (err) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                };
+                console.log('Temperature: ' + temp + 'C, ' + 'humidity: ' + humid + '%');
+            });
 
-if (dht_sensor.initialize()) {
-    dht_sensor.read();
-} else {
-    console.warn('Failed to initialize sensor');
-}
+            setTimeout(function () {
+                logData.read();
+            }, delay);
+        }
+    };
+
+    if (logData.initialize()) {
+        logData.read();
+    } else {
+        console.warn('Failed to initialize sensor');
+    }
+
+});
