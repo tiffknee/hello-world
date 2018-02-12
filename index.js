@@ -121,7 +121,7 @@ http.listen(3000, function () {
                 "humidity" : humid
             }
             
-            fs.appendFile('./'+stamp+'/sensorLog.json', JSON.stringify(data), (err) => {
+            fs.appendFile('./'+stamp+'/sensorLog.json', JSON.stringify(data, null, '\t'), (err) => {
                 if (err) {
                     console.error(err);
                     return;
