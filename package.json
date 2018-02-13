@@ -1,6 +1,6 @@
 {
   "name": "humidity-chamber",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "just another humidity chamber pushing rPi cam to cients using sockets",
   "private": true,
   "main": "index.js",

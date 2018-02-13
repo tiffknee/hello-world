@@ -8,6 +8,7 @@ var app = require('express')(),
 
 var campi = new Campi();
 
+// folder creation
 var now = new Date();
 var stamp = now.getMonth()+'-'+now.getDay()+'-'+now.getHours()+'-'+now.getMinutes();
 
@@ -16,6 +17,7 @@ if (!fs.existsSync(stamp)){
     console.log('Folder #'+stamp+' created');
 }
 
+// helper function
 function interval(func, wait, times){
     var interv = function(w, t){
         return function(){
@@ -35,27 +37,38 @@ function interval(func, wait, times){
     setTimeout(interv, wait);
 };
 
+// route dispatch
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-var sockets = {};
- 
+// start new timelapse session on start-stream event
 io.on('connection', function(socket) {
   socket.on('start-stream', function() {
+    console.log('Started new documentation for timelapse');
     session(io);
   });
 });
 
+// start server
 http.listen(3000, function () {
     console.log('listening on port 3000');
 
     var busy = false;
     var imageCount = 0;
 
+    // TODO: configurable via interface?
     var duration = 1000 * 60 * 60 * 3; //7 hours for wood; 3 hours for biomat
     var delay = 1000 * 60 * 2; //5 minutes for wood; 2 minutes for biomat
     var rate = 1000 * 10; //15 seconds for wood; 10 seconds for biomat
+
+
+    interval(function(){
+        if (!busy) {
+            streaming();
+        }
+        logData.display();
+    }, 5000, 5);
 
 
     var session = setInterval(function () {
@@ -84,7 +97,6 @@ http.listen(3000, function () {
     // take picture
     function saveFrames(){
         busy = true;
-
         campi.getImageAsFile({
             width: 1024,
             height: 768,
