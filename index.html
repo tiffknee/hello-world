@@ -44,17 +44,25 @@
         document.onreadystatechange = function() {
             var state = document.readyState;
             if (state == 'complete') {
+
                 var imageCount = 0;
                 var socket = io(); //init sockets
-                socket.on('image', function(message) { //when new image is saved, liveStream event will be broadcasted
-                    document.getElementById("image").src = 'data:image/jpg;base64,' + message; //fetch the image
+
+                // fetch the image
+                socket.on('image', function(message) {
+                    document.getElementById("image").src = 'data:image/jpg;base64,' + message;
                     document.getElementById("caption").innerHTML = 'frame #' + ++imageCount;
                 });
+
+                // fetch data
+                socket.on('sensorUpdate', function(data) {
+                    document.getElementById("sensorData").innerHTML = "Temperature: " + data.temperature + "C, humidity: " + data.humidity + "%";
+                });
                 
-                function startStream() { //start streaming/cacpture when a user clicks on the button
+                // start new timelapse when button clicked
+                function startStream() {
                     socket.emit('start-stream');
-                    $('.start').hide(); //if video has already started by another user, hide the button and show the last saved image
-                    //TODO: show button when timelapse has finished
+                    $('.start').hide(); // TODO: hide button when started timelapsing
                 }
                 
             }
@@ -74,6 +82,7 @@
 <div class="container">
     <img id="image" src="">
     <p id="caption">frame #0</p>
+    <p id="sensorData">no data yet</p>
 </div>
 
 <hr>
