@@ -180,7 +180,7 @@ http.listen(3000, function () {
     };
 
     if (logData.initialize()){
-        logData.record();
+        logData.display();
     } else {
         console.warn('Failed to initialize sensor');
     }
