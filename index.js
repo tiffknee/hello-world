@@ -67,7 +67,6 @@ http.listen(3000, function () {
         if (!busy) {
             streaming();
         }
-        logData.display();
     }, 5000, 5);
 
 
