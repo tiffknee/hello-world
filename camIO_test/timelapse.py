@@ -3,8 +3,8 @@ import datetime
 import os
 import picamera
 
-duration = 10 #in hours
-delay = 5 #in minutes
+duration = 5 #in hours
+delay = 1 #in minutes
 
 
 folder = datetime.datetime.now().strftime('%Y-%m-%d %H_%M_%S')
