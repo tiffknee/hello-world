@@ -42,6 +42,8 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+////------- TO DO
+
 // start new timelapse session on start-stream event
 io.on('connection', function(socket) {
   socket.on('start-stream', function() {
@@ -49,6 +51,8 @@ io.on('connection', function(socket) {
     session(io);
   });
 });
+
+////-------
 
 // start server
 http.listen(3000, function () {
@@ -62,6 +66,7 @@ http.listen(3000, function () {
     var delay = 1000 * 60 * 2; //5 minutes for wood; 2 minutes for biomat
     var rate = 1000 * 15; //15 seconds for wood; 10 seconds for biomat
 
+    ////------- TO DO
 
     interval(function(){
         if (!busy) {
@@ -69,6 +74,7 @@ http.listen(3000, function () {
         }
     }, 5000, 5);
 
+    ////-------
 
     var session = setInterval(function () {
 
@@ -124,7 +130,20 @@ http.listen(3000, function () {
             vflip: false,
             shutter: 20000
         }, function (err, stream) {
-            
+/*
+            var message = '';
+
+            var base64Stream = stream.pipe(base64.encode());
+
+            base64Stream.on('data', function (buffer) {
+                message += buffer.toString();
+            });
+
+            base64Stream.on('end', function () {
+                io.sockets.emit('image', message);
+                busy = false;
+            });
+*/
         });
     }
 
