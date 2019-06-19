@@ -1,4 +1,4 @@
-    /* FSR testing sketch. 
+  /* FSR testing sketch. 
      
     Connect one end of FSR to power, the other end to Analog 0.
     Then connect one end of a 10K resistor from Analog 0 to ground 
@@ -7,10 +7,10 @@
 
 
 #include "DHT.h"
-
-
+#include <ArduinoJson.h>
 #define TempHumidPin 8
 #define FSR_COUNT 6
+
 
 int fsrPins[] = {0,1,2,3,4,5};
 int fsrPin = 0;     // the FSR and 10K pulldown are connected to a0
@@ -24,10 +24,9 @@ unsigned long fsrConductances[FSR_COUNT];
 unsigned long fsrConductance;
 long fsrForces[FSR_COUNT];
 long fsrForce;      // Finally, the resistance converted to force
-
 unsigned long currentTime = 0;
 unsigned long timerData = 0;
-unsigned const long intervalData = (unsigned long)1000 * (unsigned long)60; //take readings every 1 min
+unsigned const long intervalData = (unsigned long)1000 * (unsigned long)10; //take readings every 1 min, change to 60 for every minute
 
 
 DHT dht(TempHumidPin, DHT22);
@@ -40,65 +39,46 @@ void setup(void) {
 
 void loop(void) {
   currentTime = millis();
-
   if(currentTime - timerData >= intervalData){
-
-    // Iterate through devices (FSR_COUNT)
-    for(int i = 0; i<FSR_COUNT; i++){
-      Serial.print("FSR #");
-      Serial.println(i);
-      fsrReadings[i] = analogRead(fsrPins[i]);
-      Serial.print("Analog reading = ");
-      Serial.println(fsrReadings[i]);
-  
-      // analog voltage reading ranges from about 0 to 1023 which maps to 0V to 5V (= 5000mV)
-      fsrVoltages[i] = map(fsrReadings[i], 0, 1023, 0, 5000);
-      Serial.print("Voltage reading in mV = ");
-      Serial.println(fsrVoltages[i]);
-  
-      if (fsrVoltages[i] == 0) {
-        Serial.println("No pressure");  
-      } else {
-        // The voltage = Vcc * R / (R + FSR) where R = 10K and Vcc = 5V
-        // so FSR = ((Vcc - V) * R) / V        yay math!
-        fsrResistances[i] = 5000 - fsrVoltages[i];     // fsrVoltage is in millivolts so 5V = 5000mV
-        fsrResistances[i] *= 10000;                // 10K resistor
-        fsrResistances[i] /= fsrVoltages[i];
-        Serial.print("FSR resistance in ohms = ");
-        Serial.println(fsrResistances[i]);
-     
-        fsrConductances[i] = 1000000;           // we measure in micromhos so 
-        fsrConductances[i] /= fsrResistances[i];
-        Serial.print("Conductance in microMhos: ");
-        Serial.println(fsrConductances[i]);
-     
-        // Use the two FSR guide graphs to approximate the force
-        if (fsrConductances[i] <= 1000) {
-          fsrForces[i] = fsrConductances[i] / 80;
-          Serial.print("Force in Newtons: ");
-          Serial.println(fsrForces[i]);      
-        } else {
-          fsrForces[i] = fsrConductances[i] - 1000;
-          fsrForces[i] /= 30;
-          Serial.print("Force in Newtons: ");
-          Serial.println(fsrForces[i]);            
-        }
-        
-      }
-      Serial.println("--------------------");
-    }
-    
-    Serial.println("--------------------");
-    
     float humid = dht.readHumidity();
     float temp = dht.readTemperature();
+    DynamicJsonDocument  jDoc(300);
+    jDoc["time"] = currentTime;
+    jDoc["humidity"] = humid;
+    jDoc["temp"] = temp;
     
-    Serial.print("Relative Humidity in %: ");
-    Serial.println(humid);
-    Serial.print("Temperature in *C: ");
-    Serial.println(temp);
-    
-    Serial.println("_______________________________________");
+    // Iterate through devices (FSR_COUNT)
+    for(int i = 0; i<FSR_COUNT; i++){
+      String sensorId = "FSR_" + String(i+1);
+      JsonObject sensorData = jDoc.createNestedObject(sensorId);
+      fsrReadings[i] = analogRead(fsrPins[i]);
+      // analog voltage reading ranges from about 0 to 1023 which maps to 0V to 5V (= 5000mV)
+      fsrVoltages[i] = map(fsrReadings[i], 0, 1023, 0, 5000);
+  
+      // The voltage = Vcc * R / (R + FSR) where R = 10K and Vcc = 5V
+      // so FSR = ((Vcc - V) * R) / V        yay math!
+      fsrResistances[i] = 5000 - fsrVoltages[i];     // fsrVoltage is in millivolts so 5V = 5000mV
+      fsrResistances[i] *= 10000;                // 10K resistor
+      fsrResistances[i] /= fsrVoltages[i];
+      fsrConductances[i] = 1000000;           // we measure in micromhos so 
+      fsrConductances[i] /= fsrResistances[i];
+   
+      // Use the two FSR guide graphs to approximate the force
+      if (fsrConductances[i] <= 1000) {
+        fsrForces[i] = fsrConductances[i] / 80;     
+      } else {
+        fsrForces[i] = fsrConductances[i] - 1000;
+        fsrForces[i] /= 30;       
+      }
+      
+      // Publish data in json format
+      sensorData["resistance"] = fsrResistances[i];
+      sensorData["force"] = fsrForces[i];
+      
+    }
+    serializeJsonPretty(jDoc, Serial);
+    Serial.println("");
+
     timerData = millis();
   }
 }
