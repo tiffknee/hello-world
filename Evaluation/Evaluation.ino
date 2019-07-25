@@ -26,7 +26,7 @@ long fsrForces[FSR_COUNT];
 long fsrForce;      // Finally, the resistance converted to force
 unsigned long currentTime = 0;
 unsigned long timerData = 0;
-unsigned const long intervalData = (unsigned long)1000 * (unsigned long)10; //take readings every 1 min, change to 60 for every minute
+unsigned const long intervalData = (unsigned long)1000 * (unsigned long)60; //take readings every 1 min
 
 
 DHT dht(TempHumidPin, DHT22);
