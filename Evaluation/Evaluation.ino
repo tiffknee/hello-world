@@ -48,6 +48,8 @@ void loop(void) {
     jDoc["temp"] = temp;
     if(!firstLine){
       Serial.println(",");  
+    }else{
+      firstLine = false;
     }
     // Iterate through devices (FSR_COUNT)
     for(int i = 0; i<FSR_COUNT; i++){
