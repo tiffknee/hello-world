@@ -27,7 +27,7 @@ long fsrForce;      // Finally, the resistance converted to force
 unsigned long currentTime = 0;
 unsigned long timerData = 0;
 unsigned const long intervalData = (unsigned long)1000 * (unsigned long)10; //take readings every 1 min, change to 60 for every minute
-
+bool firstLine = true;
 
 DHT dht(TempHumidPin, DHT22);
 
@@ -46,7 +46,9 @@ void loop(void) {
     jDoc["time"] = currentTime;
     jDoc["humidity"] = humid;
     jDoc["temp"] = temp;
-    
+    if(!firstLine){
+      Serial.println(",");  
+    }
     // Iterate through devices (FSR_COUNT)
     for(int i = 0; i<FSR_COUNT; i++){
       String sensorId = "FSR_" + String(i+1);
@@ -77,8 +79,6 @@ void loop(void) {
       
     }
     serializeJsonPretty(jDoc, Serial);
-    Serial.println("");
-
     timerData = millis();
   }
 }
