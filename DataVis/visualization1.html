@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+<style>
+body {
+  font-family: Sans-Serif, Arial;
+  font-size: 12px;
+}
+.line {
+  stroke-width: 1.5px;
+  stroke-dasharray: 2,2;
+  fill: none;
+}
+.axis path,
+.axis line {
+  stroke-width: 1px;
+  stroke: #777;
+  fill: none;
+  shape-rendering: crispEdges;
+}
+</style>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+</head>
+<body>
+
+  <div id="chart"></div>
+
+<script>
+
+var margin = {top: 45, right: 35, bottom: 45, left: 35},
+  width = 900 - margin.left - margin.right,
+  height = 600 - margin.top - margin.bottom;
+
+var svg = d3.select("#chart").append("svg")
+  .attr("width", (width + margin.left + margin.right)+"px")
+  .attr("height", (height + margin.top + margin.bottom)+"px")
+  .append('g')
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+var duration = 250;
+
+var lineOpacity = "0.25";
+var lineOpacityHover = "0.85";
+var otherLinesOpacityHover = "0.1";
+var lineStroke = "1.5px";
+var lineStrokeHover = "2.5px";
+
+var circleOpacity = '0.85';
+var circleOpacityOnLineHover = "0.25"
+var circleRadius = 3;
+var circleRadiusHover = 6;
+
+
+d3.json("dataset/test1_data.json", function(error, data){
+  if (error) return console.error(error);
+  //console.log(data);
+
+
+var allSensors = ["FSR_1", "FSR_2", "FSR_3"]
+//var allSensors = ["FSR_4", "FSR_5", "FSR_6"]
+
+
+////Format data - array of arrays of {x, y} tuples
+var dataReady = allSensors.map( function(sensorNum) {
+  return {
+    name: sensorNum,
+    values: data.map(function(d) {
+      return {time: d.time, humid: d.humidity, temp: d.temp, value: +d[sensorNum].resistance};
+    })
+  };
+});
+//console.log(dataReady)
+
+
+var color = d3.scaleOrdinal()
+  .domain(allSensors)
+  .range(d3.schemeCategory10);
+
+
+var xAxis = d3.scaleLinear()
+  .domain(d3.extent(data, function(d) { return +d.time; }))
+  .range([0, width]);
+  svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(xAxis).ticks(6))
+  .append('text')
+  .attr("x", width-35)
+  .attr("y", 30)
+  .attr("fill", "#777")
+  .text("TIME IN SECONDS");
+
+var yAxis = d3.scaleLinear()
+  //.domain([0, d3.max(data[0].FSR_1, d => d.resistance)])
+  //.domain([0, d3.max(data[0].humidity)])
+  .domain([0, 25000])
+  //.domain([0, d3.max(data, function(d) { return +d.humidity; })])
+  .range([height, 0]);
+  svg.append("g")
+  .call(d3.axisLeft(yAxis).ticks(5))
+  .append('text')
+  .attr("y", -25)
+  .attr("transform", "rotate(-90)")
+  .attr("fill", "#777")
+  .text("FORCE IN NEWTONS");
+
+
+////Add lines
+var line = d3.line()
+  .x(function(d) { return xAxis(+d.time) })
+  .y(function(d) { return yAxis(+d.value) })
+svg.selectAll("myLines")
+  .data(dataReady)
+  .enter()
+  .append("path")
+  .attr("d", function(d){ return line(d.values) } )
+  .attr("stroke", function(d){ return color(d.name) })
+  .attr('class', 'line');
+
+});
+
+</script>
+
+</body>
+</html>

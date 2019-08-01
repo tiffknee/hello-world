@@ -1,0 +1,209 @@
+[{
+  "time": 1086547,
+  "humidity": 30.4,
+  "temp": 34,
+  "FSR_1": {
+    "resistance": 6212,
+    "force": 2
+  },
+  "FSR_2": {
+    "resistance": 11276,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 10300,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1734,
+    "force": 7
+  },
+  "FSR_5": {
+    "resistance": 2431,
+    "force": 5
+  },
+  "FSR_6": {
+    "resistance": 4310,
+    "force": 2
+  }
+}
+,
+{
+  "time": 1146932,
+  "humidity": 30.3,
+  "temp": 34.1,
+  "FSR_1": {
+    "resistance": 6139,
+    "force": 2
+  },
+  "FSR_2": {
+    "resistance": 11358,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 10383,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1745,
+    "force": 7
+  },
+  "FSR_5": {
+    "resistance": 2462,
+    "force": 5
+  },
+  "FSR_6": {
+    "resistance": 4310,
+    "force": 2
+  }
+}
+,
+{
+  "time": 1207318,
+  "humidity": 30.3,
+  "temp": 34.3,
+  "FSR_1": {
+    "resistance": 6239,
+    "force": 2
+  },
+  "FSR_2": {
+    "resistance": 10964,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 10424,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1745,
+    "force": 7
+  },
+  "FSR_5": {
+    "resistance": 2478,
+    "force": 5
+  },
+  "FSR_6": {
+    "resistance": 4310,
+    "force": 2
+  }
+}
+,
+{
+  "time": 1267704,
+  "humidity": 30.2,
+  "temp": 34.3,
+  "FSR_1": {
+    "resistance": 6165,
+    "force": 2
+  },
+  "FSR_2": {
+    "resistance": 11312,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 10584,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1773,
+    "force": 7
+  },
+  "FSR_5": {
+    "resistance": 2281,
+    "force": 5
+  },
+  "FSR_6": {
+    "resistance": 4658,
+    "force": 2
+  }
+}
+,
+{
+  "time": 1328090,
+  "humidity": 30.2,
+  "temp": 34.4,
+  "FSR_1": {
+    "resistance": 6688,
+    "force": 1
+  },
+  "FSR_2": {
+    "resistance": 11588,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 11958,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1910,
+    "force": 6
+  },
+  "FSR_5": {
+    "resistance": 3000,
+    "force": 4
+  },
+  "FSR_6": {
+    "resistance": 5133,
+    "force": 2
+  }
+}
+,
+{
+  "time": 1388477,
+  "humidity": 30.7,
+  "temp": 34.3,
+  "FSR_1": {
+    "resistance": 6744,
+    "force": 1
+  },
+  "FSR_2": {
+    "resistance": 11682,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 12143,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1953,
+    "force": 6
+  },
+  "FSR_5": {
+    "resistance": 3099,
+    "force": 4
+  },
+  "FSR_6": {
+    "resistance": 4192,
+    "force": 2
+  }
+}
+,
+{
+  "time": 1448863,
+  "humidity": 31.3,
+  "temp": 34.1,
+  "FSR_1": {
+    "resistance": 6829,
+    "force": 1
+  },
+  "FSR_2": {
+    "resistance": 11231,
+    "force": 1
+  },
+  "FSR_3": {
+    "resistance": 11186,
+    "force": 1
+  },
+  "FSR_4": {
+    "resistance": 1910,
+    "force": 6
+  },
+  "FSR_5": {
+    "resistance": 3390,
+    "force": 3
+  },
+  "FSR_6": {
+    "resistance": 4033,
+    "force": 3
+  }
+}]
