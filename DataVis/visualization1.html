@@ -112,13 +112,26 @@ var yAxis = d3.scaleLinear()
 var line = d3.line()
   .x(function(d) { return xAxis(+d.time) })
   .y(function(d) { return yAxis(+d.value) })
-svg.selectAll("myLines")
+svg.selectAll("lines")
   .data(dataReady)
   .enter()
   .append("path")
   .attr("d", function(d){ return line(d.values) } )
   .attr("stroke", function(d){ return color(d.name) })
   .attr('class', 'line');
+
+
+///Add a label at the end of each line
+svg.selectAll("legend")
+  .data(dataReady)
+  .enter()
+    .append('g')
+    .append("text")
+      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; }) // keep only last value of each time series
+      .attr("transform", function(d) { return "translate(" + xAxis(d.value.time) + "," + yAxis(d.value.value) + ")"; }) // put at position of last point
+      .attr("x", -6)
+      .text(function(d) { return d.name; })
+      .style("fill", function(d){ return color(d.name) });
 
 });
 
