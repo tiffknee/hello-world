@@ -4,12 +4,17 @@
 
 <style>
 body {
-  font-family: Sans-Serif, Arial;
+  font-family: "Helvetica", sans-serif;
   font-size: 12px;
 }
-.line {
+.path {
   stroke-width: 1.5px;
   stroke-dasharray: 2,2;
+  fill: none;
+}
+.line {
+  stroke-width: 3px;
+  stroke-opacity: 0.5;
   fill: none;
 }
 .axis path,
@@ -39,20 +44,6 @@ var svg = d3.select("#chart").append("svg")
   .attr("height", (height + margin.top + margin.bottom)+"px")
   .append('g')
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-var duration = 250;
-
-var lineOpacity = "0.25";
-var lineOpacityHover = "0.85";
-var otherLinesOpacityHover = "0.1";
-var lineStroke = "1.5px";
-var lineStrokeHover = "2.5px";
-
-var circleOpacity = '0.85';
-var circleOpacityOnLineHover = "0.25"
-var circleRadius = 3;
-var circleRadiusHover = 6;
 
 
 d3.json("dataset/test1_data.json", function(error, data){
@@ -96,8 +87,8 @@ var xAxis = d3.scaleLinear()
 var yAxis = d3.scaleLinear()
   //.domain([0, d3.max(data[0].FSR_1, d => d.resistance)])
   //.domain([0, d3.max(data[0].humidity)])
-  .domain([0, 25000])
-  //.domain([0, d3.max(data, function(d) { return +d.humidity; })])
+  .domain([0, d3.max(dataReady, function(d) { return +d.values[1200].value; } ) ])
+  //.domain([0, d3.max(dataReady, function(d) { return +d.value; } ) ])
   .range([height, 0]);
   svg.append("g")
   .call(d3.axisLeft(yAxis).ticks(5))
@@ -118,7 +109,7 @@ svg.selectAll("lines")
   .append("path")
   .attr("d", function(d){ return line(d.values) } )
   .attr("stroke", function(d){ return color(d.name) })
-  .attr('class', 'line');
+  .attr('class', 'path');
 
 
 ///Add a label at the end of each line
@@ -132,6 +123,13 @@ svg.selectAll("legend")
       .attr("x", -6)
       .text(function(d) { return d.name; })
       .style("fill", function(d){ return color(d.name) });
+
+// get the x and y values for least squares
+var xSeries = data.map(function(d) { return parseFloat(+d.time); });
+var ySeries = data.map(function(d) { return parseFloat(+d.value); });
+    
+console.log('xSeries: ' + xSeries);
+console.log('ySeries: ' + ySeries);  
 
 });
 
