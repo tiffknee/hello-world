@@ -42,7 +42,7 @@ var margin = {top: 45, right: 35, bottom: 45, left: 35},
 var svg = d3.select("#chart").append("svg")
   .attr("width", (width + margin.left + margin.right)+"px")
   .attr("height", (height + margin.top + margin.bottom)+"px")
-  .append('g')
+  .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
@@ -51,8 +51,7 @@ d3.json("dataset/test1_data.json", function(error, data){
   //console.log(data);
 
 
-var allSensors = ["FSR_1", "FSR_2", "FSR_3"]
-//var allSensors = ["FSR_4", "FSR_5", "FSR_6"]
+var allSensors = ["FSR_1", "FSR_2", "FSR_3", "FSR_4", "FSR_5", "FSR_6"]
 
 
 ////Format data - array of arrays of {x, y} tuples
@@ -78,21 +77,21 @@ var xAxis = d3.scaleLinear()
   svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(d3.axisBottom(xAxis).ticks(6))
-  .append('text')
+  .append("text")
   .attr("x", width-35)
   .attr("y", 30)
   .attr("fill", "#777")
   .text("TIME IN SECONDS");
 
 var yAxis = d3.scaleLinear()
-  //.domain([0, d3.max(data[0].FSR_1, d => d.resistance)])
-  //.domain([0, d3.max(data[0].humidity)])
-  .domain([0, d3.max(dataReady, function(d) { return +d.values[1200].value; } ) ])
-  //.domain([0, d3.max(dataReady, function(d) { return +d.value; } ) ])
+  //.domain([0, d3.max(data[0].FSR_1, d => d.resistance) ])
+  //.domain([0, d3.max(data[0].humidity) ])
+  .domain([0, d3.max(dataReady, function(d) { return d3.max(d.values, function(d) { return +d.value; }) }) ])
+  //.domain([0, d3.max(dataReady, function(d) { return +d.values[1200].value; }) ])
   .range([height, 0]);
   svg.append("g")
   .call(d3.axisLeft(yAxis).ticks(5))
-  .append('text')
+  .append("text")
   .attr("y", -25)
   .attr("transform", "rotate(-90)")
   .attr("fill", "#777")
@@ -107,31 +106,90 @@ svg.selectAll("lines")
   .data(dataReady)
   .enter()
   .append("path")
-  .attr("d", function(d){ return line(d.values) } )
-  .attr("stroke", function(d){ return color(d.name) })
-  .attr('class', 'path');
+    .attr("d", function(d){ return line(d.values) } )
+    .attr("stroke", function(d){ return color(d.name) })
+    .attr("class", function(d){ return "path " + d.name });
 
 
 ///Add a label at the end of each line
-svg.selectAll("legend")
+svg.selectAll("label")
   .data(dataReady)
   .enter()
-    .append('g')
+    .append("g")
     .append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; }) // keep only last value of each time series
       .attr("transform", function(d) { return "translate(" + xAxis(d.value.time) + "," + yAxis(d.value.value) + ")"; }) // put at position of last point
       .attr("x", -6)
+      .attr("class", function(d){ return d.name })
       .text(function(d) { return d.name; })
       .style("fill", function(d){ return color(d.name) });
 
+
+///Add an interactive legend
+svg.selectAll("legend")
+  .data(dataReady)
+  .enter()
+    .append("g")
+    .append("text")
+    .attr("x", function(d,i){ return 60 + i*90})
+    .attr("y", 3)
+    .text(function(d) { return d.name; })
+    .style("fill", function(d){ return color(d.name) })
+    .style("font-size", 15)
+  .on("click", function(d){
+    currentOpacity = d3.selectAll("." + d.name).style("opacity") // is the element currently visible ?
+    d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1) // Change the opacity: from 0 to 1 or from 1 to 0
+  })
+
+
 // get the x and y values for least squares
 var xSeries = data.map(function(d) { return parseFloat(+d.time); });
-var ySeries = data.map(function(d) { return parseFloat(+d.value); });
-    
-console.log('xSeries: ' + xSeries);
-console.log('ySeries: ' + ySeries);  
+var ySeries = dataReady.map(function(d) { return d.values.map(function(d) { return parseFloat(+d.value); }) });
+//console.log("xSeries: " + xSeries);
+//console.log("ySeries: " + ySeries);
+
+var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+
+var slope = leastSquaresCoeff[0];
+var intercept = leastSquaresCoeff[1];
+var rSquare = leastSquaresCoeff[2];
+
+console.log("slope: " + slope);
+console.log("intercept: " + intercept);
+console.log("y = " + slope + "x + " + intercept);
+
+var trendline = svg.append("line")
+  .attr("x1", xAxis(0.))
+  .attr("y1", yAxis(intercept))
+  .attr("x2", xAxis(numSteps))
+  .attr("y2", yAxis(numSteps*slope + intercept))
+  .classed("line", true);
 
 });
+
+// returns slope, intercept and r-square of the line
+// from: http://bl.ocks.org/benvandyke/8459843
+function leastSquares(xSeries, ySeries) {
+  var reduceSumFunc = function(prev, cur) { return prev + cur; };
+
+  var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+  var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+
+  var ssXX = xSeries.map(function(d) { return Math.pow(d - xBar, 2); })
+    .reduce(reduceSumFunc);
+
+  var ssYY = ySeries.map(function(d) { return Math.pow(d - yBar, 2); })
+    .reduce(reduceSumFunc);
+
+  var ssXY = xSeries.map(function(d, i) { return (d - xBar) * (ySeries[i] - yBar); })
+    .reduce(reduceSumFunc);
+
+  var slope = ssXY / ssXX;
+  var intercept = yBar - (xBar * slope);
+  var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+
+  return [slope, intercept, rSquare];
+}
 
 </script>
 
