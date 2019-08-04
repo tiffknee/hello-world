@@ -31,6 +31,10 @@ body {
 </head>
 <body>
 
+  <button onclick="update(set1)">Diameter S</button>
+  <button onclick="update(set2)">Diameter M</button>
+  <button onclick="update(set3)">Diameter L</button>
+
   <div id="chart"></div>
 
 <script>
@@ -148,7 +152,7 @@ var ySeries = dataReady.map(function(d) { return d.values.map(function(d) { retu
 //console.log("xSeries: " + xSeries);
 //console.log("ySeries: " + ySeries);
 
-var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+var leastSquaresCoeff = leastSquares(xSeries, ySeries[3]);
 
 var slope = leastSquaresCoeff[0];
 var intercept = leastSquaresCoeff[1];
@@ -157,6 +161,8 @@ var rSquare = leastSquaresCoeff[2];
 console.log("slope: " + slope);
 console.log("intercept: " + intercept);
 console.log("y = " + slope + "x + " + intercept);
+
+var numSteps = d3.max(data, function(d) { return +d.time; });
 
 var trendline = svg.append("line")
   .attr("x1", xAxis(0.))
