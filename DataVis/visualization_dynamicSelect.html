@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+
+<style>
+body {
+  font-family: "Helvetica", sans-serif;
+  font-size: 12px;
+}
+label {
+  margin-left: 60px;
+  font-size: 15px;
+}
+.path {
+  stroke-width: 1.5px;
+  stroke-dasharray: 2,2;
+  fill: none;
+}
+.line {
+  stroke-width: 3px;
+  stroke-opacity: 0.5;
+  fill: none;
+}
+.axis path,
+.axis line {
+  stroke-width: 1px;
+  stroke: #777;
+  fill: none;
+  shape-rendering: crispEdges;
+}
+</style>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+</head>
+<body>
+
+  <button onclick="update(set1)">Diameter S</button>
+  <button onclick="update(set2)">Diameter M</button>
+  <button onclick="update(set3)">Diameter L</button>
+
+  <br><br>
+
+  <div id="legend"></div>
+  <div id="chart"></div>
+
+<script>
+
+var margin = {top: 45, right: 35, bottom: 45, left: 35},
+  width = 900 - margin.left - margin.right,
+  height = 600 - margin.top - margin.bottom;
+
+var svg = d3.select("#chart").append("svg")
+  .attr("width", (width + margin.left + margin.right)+"px")
+  .attr("height", (height + margin.top + margin.bottom)+"px")
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.json("dataset/test1_data_zeroed.json", function(error, data){
+  if (error) return console.error(error);
+  //console.log(data);
+
+
+var allSensors = ["FSR_1", "FSR_2", "FSR_3", "FSR_4", "FSR_5", "FSR_6"];
+
+////Format data - array of arrays of {x, y} tuples
+var dataReady = allSensors.map( function(sensorNum) {
+  return {
+    name: sensorNum,
+    values: data.map(function(d) {
+      return {time: d.time, humid: d.humidity, temp: d.temp, value: +d[sensorNum].force};
+    })
+  };
+});
+//console.log(dataReady)
+
+
+var color = d3.scaleOrdinal()
+  .domain(allSensors)
+  .range(d3.schemeCategory10);
+
+
+var xAxis = d3.scaleLinear()
+  .domain(d3.extent(data, function(d) { return +d.time }))
+  .range([0, width]);
+svg.append("g")
+  .call(d3.axisBottom(xAxis).ticks(6))
+  .attr("transform", "translate(0," + height + ")")
+  .attr("class","xAxis")
+  .append("text")
+  .attr("x", width-45)
+  .attr("y", 30)
+  .attr("fill", "#777")
+  .text("TIME IN MILLISECONDS");
+
+var yAxis = d3.scaleLinear()
+  .domain([-0.25, d3.max(dataReady, function(d) { return d3.max(d.values, function(d) { return +d.value; }) }) ])
+  .range([height, 0]);
+svg.append("g")
+  .call(d3.axisLeft(yAxis).ticks(5))
+  .attr("class","yAxis")
+  .append("text")
+  .attr("y", -25)
+  .attr("fill", "#777")
+  .text("CHANGE IN FORCE")
+  .attr("transform", "rotate(-90)");
+
+
+////Add lines
+var line = d3.line()
+  .x(function(d) { return xAxis(+d.time) })
+  .y(function(d) { return yAxis(+d.value) })
+svg.selectAll("paths")
+  .data(dataReady)
+  .enter()
+  .append("path")
+    .attr("d", function(d){ return line(d.values) })
+    .attr("stroke", function(d){ return color(d.name) })
+    .attr("class", function(d){ return "path " + d.name });
+
+/*
+///Add a tag at the end of each line
+svg.selectAll("tags")
+  .data(dataReady)
+  .enter()
+    .append("g")
+    .append("text")
+      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; }) // keep only last value of each time series
+      .attr("transform", function(d) { return "translate(" + xAxis(d.value.time) + "," + yAxis(d.value.value) + ")"; }) // put at position of last point
+      .attr("x", -6)
+      .text(function(d) { return d.name })
+      .style("fill", function(d){ return color(d.name) })
+      .attr("class", function(d){ return "tag " + d.name });
+*/
+
+///Add an interactive legend
+d3.select("#legend").selectAll("legend")
+  .data(dataReady)
+  .enter()
+    .append("label")
+      .text(function(d) { return d.name; })
+      .attr("for",function(d,i){ return 'a'+i; })
+      .style("color", function(d){ return color(d.name) })
+    .append("input")
+      .attr("type","checkbox")
+      .attr("class","check")
+      .attr("name", function(d,i) { return 'a'+i; })
+      .attr("value", function(d){ return d.name })
+      .attr("checked", true);
+
+
+
+function update(){
+
+  var selectSensors = [];
+
+  d3.selectAll(".check").each(function(d){
+    cb = d3.select(this);    
+    if(cb.property("checked")){
+      selectSensors.push(cb.property("value"));
+    }
+  });
+
+  //var filteredSensors = dataReady.filter(function(d){return d.name==selectSensors[0]})
+  var filteredSensors = dataReady.filter(function(d,i){return selectSensors.indexOf(d.name) >= 0 })
+
+
+  yAxis.domain([-0.25, d3.max(filteredSensors, function(d) { return d3.max(d.values, function(d) { return +d.value; }) }) ])
+  svg.selectAll(".yAxis")
+    .transition()
+    .duration(1500)
+    .call(d3.axisLeft().scale(yAxis));
+
+
+  ////Update lines
+  var updatePaths = svg.selectAll(".path")
+    .data(filteredSensors);
+  updatePaths.exit()
+    .remove();
+  updatePaths.enter()
+    .append("path");
+  updatePaths.transition()
+    .duration(750)
+      .attr("d", function(d){ return line(d.values) })
+      .attr("stroke", function(d){ return color(d.name) })
+      .attr("class", function(d){ return "path " + d.name });
+
+/*
+  ////Update tags
+  var updateTags = svg.selectAll(".tag")
+    .data(filteredSensors);
+  updateTags.exit()
+    .remove();
+  updateTags.enter()
+    .append("g")
+    .append("text")
+    .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+    .attr("transform", function(d) { return "translate(" + xAxis(d.value.time) + "," + yAxis(d.value.value) + ")"; });
+  updateTags.transition()
+    .duration(750)
+      .attr("x", -6)
+      .text(function(d) { return d.name })
+      .style("fill", function(d){ return color(d.name) })
+      .attr("class", function(d){ return "tag " + d.name });
+*/
+}
+
+
+d3.selectAll(".check").on("change",update);
+
+});
+
+</script>
+
+</body>
+</html>
